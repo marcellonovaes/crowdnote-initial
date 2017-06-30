@@ -2,8 +2,9 @@
   "name": "crowdnote",
   "version": "1.0.0",
   "description": "A framework to build video annotation applications based on cascading crowdsourcing microtasks",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

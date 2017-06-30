@@ -1,58 +1,36 @@
+var fs = require('fs');
 var express = require('express');
 var app = express();
+app.set('view engine', 'ejs');
 
-f = require('./fifo.js');
-l = require('./lifo.js');  
-var fifo = new f.FIFO();
-var lifo = new l.LIFO();
+var f = require('./util/fifo.js');
+
+//Microtask 1
+var fifoA = new f.FIFO();
+var fifoB = new f.FIFO();
 var item;
 
-//Endpoints
+//TESTE
+for(var i=0; i<5; i++){
+	fifoA.push(i);
+}
+
 app.get('/', function(req, res) {
-  res.send('Job Distribution System');
+  res.render('index', {title: 'Job Distribution System'});
 });
 
-app.get('/get_users', function(req, res, next) {
-  res.send(users);
-})
+app.get('/microtask1', function(req, res) {
+	var item = fifoA.pop();
+	fifoB.push(item);
 
-app.get('/lifo', function(req, res, next) {
-	res.send('LIFO: '+lifo.getItems());
-})
-
-app.get('/lifo/push', function(req, res, next) {
-	if(req.query.item){
-		lifo.push(req.query.item);
+	if(fifoA.isEmpty()){
+		fifoA.setItems(fifoB.getItems());
+		fifoB.clean();	
 	}
-	res.send('LIFO: '+lifo.getItems());
-})
 
-app.get('/lifo/pop', function(req, res, next) {
-	item = lifo.pop();
-	res.send(item);
-})
-
-app.get('/fifo', function(req, res, next) {
-	res.send('FIFO: '+fifo.getItems());
-})
-
-app.get('/fifo/push', function(req, res, next) {
-	if(req.query.item){
-		fifo.push(req.query.item);
-	}
-	res.send('FIFO: '+fifo.getItems());
-})
-
-app.get('/fifo/pop', function(req, res, next) {
-	item = fifo.pop();
-	res.send(item);
-})
-
-app.get('/switch', function(req, res, next) {
-	lifo.setItems(fifo.getItems());
-	fifo.clean();
-	res.send('LIFO: '+lifo.getItems());
-})
-
+    	var bitmap = fs.readFileSync('data/test/'+item+'.jpg');
+    	var image = new Buffer(bitmap).toString('base64');
+	res.render('microtask1', {item:item ,img: image});
+});
 
 app.listen(80);

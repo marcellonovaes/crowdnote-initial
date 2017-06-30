@@ -13,6 +13,8 @@
     "express": "^4.15.3",
     "express-ejs-layouts": "^2.3.0",
     "faker": "^4.1.0",
+    "fingerprinting": "^1.0.1",
+    "mongo-express": "^0.40.0",
     "morgan": "*"
   },
   "repository": {

@@ -45,7 +45,8 @@ function compileSchemas(){
     		instruction: String,
     		media_type: String,
     		contribution_type: String,
-		minConvergence: Number
+		minConvergence: Number,
+		converged: Boolean
 	});
 	Microtasks = mongoose.model('Microtasks', microtasksSchema);
 

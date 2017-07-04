@@ -18,18 +18,19 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('openUri', function() {});
 
+var jobsSchema, Jobs;
 var microtasksSchema, Microtasks;
 var datasetsSchema, Datasets;
 var Schema = mongoose.Schema; 
 var ObjectId = Schema.ObjectId;
 compileSchemas();
 
-Microtasks.find({},function (err, Microtasks) {
+Jobs.find({},function (err, Jobs) {
   	if (err) return console.error(err);
 
-  	for(i=0; i < Microtasks.length; i++){
+  	for(i=0; i < Jobs.length; i++){
 
-  		loadDataset(Microtasks[i],i);
+  		loadDatasets(Jobs[i],i);
 
 	}
 
@@ -37,22 +38,28 @@ Microtasks.find({},function (err, Microtasks) {
 
 function compileSchemas(){
 
-	microtasksSchema = Schema({
+	jobsSchema = Schema({
    	 	_id: ObjectId,
-    		project: Number,
     		order: Number,
     		objective: String,
     		instruction: String,
+	});
+	Jobs = mongoose.model('Jobs', jobsSchema);
+
+	microtasksSchema = Schema({
+   	 	_id: ObjectId,
+    		order: Number,
+    		workflow: String,
     		media_type: String,
-    		contribution_type: String,
+    		contribution_type: Number,
 		minConvergence: Number,
-		converged: Boolean
+		closed: Boolean
 	});
 	Microtasks = mongoose.model('Microtasks', microtasksSchema);
 
 	datasetsSchema = Schema({
 	    	_id: ObjectId,
-    		microtask: ObjectId,
+    		job: ObjectId,
     		mime: String,
     		name: String,
     		converged: Boolean,
@@ -61,39 +68,30 @@ function compileSchemas(){
 	Datasets = mongoose.model('Datasets', datasetsSchema);
 }
 
-function loadDataset(Microtask,id){
+function loadDatasets(Job,id){
 
 	lifos[id] = new util.LIFO();
 	fifos[id] = new util.FIFO();
 
-	Datasets.find({microtask: Microtask._id},function (err, Datasets) {
+	Datasets.find({job: Job._id},function (err, Datasets) {
   		if (err) return console.error(err);
 
-		lifos[id].setItems(Datasets);
+		lifos[id].setItems(Datasets.reverse());
+
+	});
 
 
-	}).sort({name: 1});
-
-}
 
 
-function printItems(){
-
-  	for(i=0; i < lifos.length; i++){
-		console.log(lifos[i].getItems());
-	}
 
 }
-
-
 
 app.get('/', function(req, res) {
   res.render('index', {title: 'Job Distribution System'});
 });
 
-
 //Local Scope - isolated run
-app.get('/microtask0', function(req, res) {
+app.get('/job0', function(req, res) {
 
 
 	var id = 0;
@@ -112,13 +110,11 @@ app.get('/microtask0', function(req, res) {
 	fifos[id].push(item);
 
 	if(lifos[id].isEmpty()){
-		lifos[id].setItems(fifos[id].getItems());
+		lifos[id].setItems(fifos[id].getItems().reverse());
 		fifos[id].clean();	
 	}
 
-    	var bitmap = fs.readFileSync('data/'+item.microtask+'/'+item.name+'.'+item.mime);
-    	var image = new Buffer(bitmap).toString('base64');
-	res.render('microtask1', {fingerprint: fingerprint , item:item._id , img: image});
+	res.render('595ab2f9aa17790e267ad712', {fingerprint: fingerprint , item:item, form:item.job, name:item.name, mime:item.mime});
 
 
 });

@@ -1,0 +1,55 @@
+<head>
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+</head>
+<body>
+<p align=center><h2><%= instruction %></h2></p>
+<p align=center>Fingerprint:<%= fingerprint %></p>
+<p align=center>Item:<%= item %></p>
+<p align=center>Microtask 0:<%= m0_id %></p>
+<p align=center>Microtask 1:<%= m1_id %></p>
+<p align=center>
+	  <video id="video" width="600" controls  preload>
+		<source src="data:video/<%= mime %>;base64,<%= v64 %>" type="video/<%= mime %>"> 
+ 	   	Your browser does not support HTML5 video.
+	  </video>
+</p>
+<form method='post' id='form' >
+	<input type='hidden' id='item' name='item' value= '<%= item_id %>' >
+	<input type='hidden' id='fingerprint' name='fingerprint' value='<%= fingerprint %>' >
+	<input type='hidden' id='m0_id' name='m0_id' value='<%= m0_id %>' >
+	<input type='hidden' id='m0_contrib' name='m0_contrib' >
+	<input type='hidden' id='m1_id' name='m1_id' value='<%= m1_id %>' >
+	<input type='text'   id='m1_contrib' name='m1_contrib'>
+   	<button  onClick="sendContribution()">Send Contribution</button>
+</form>
+
+
+	<script>
+		var video = document.getElementById('video');
+		video.currentTime = <%= start %>;
+
+		video.addEventListener("timeupdate", function() {
+
+			if(this.currentTime < <%= start %>){
+				video.currentTime = <%= start %>;
+				video.pause();
+			}
+
+
+			if(this.currentTime > <%= stop %>){
+				video.pause();
+				video.currentTime = <%= start %>;
+			}
+
+		}, false);
+
+		function sendContribution(){
+			document.getElementById("m0_contrib").value =  video.currentTime;
+			document.getElementById("form").action="http://<%= host %>/jobs/<%= job %>"
+		}
+
+	</script>
+
+</body>
+
+

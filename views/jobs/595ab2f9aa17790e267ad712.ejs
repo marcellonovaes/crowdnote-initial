@@ -7,7 +7,7 @@
 </head>
 <body>
 <center>
-<div class="w3-card-4 w3-margin w3-white">
+<div class="w3-card-4 w3-margin w3-white" style="padding:1px;">
 
 <p>
 <textarea align="center" id="banner" class="instructions" readonly style="width:810;height:100; background-color : #eeeeee;text-align: justify;font-size:18px;padding:20px;">
@@ -16,7 +16,7 @@
 </p>
 
 <p align=center>
-	<div class="player">
+	<div class="player"  style="position: absolute;left:200px">
 	  <video id="video" width="600" controls  preload>
 		<source src="data:video/<%= mime %>;base64,<%= v64 %>" type="video/<%= mime %>"> 
 		<!-- source src="http://<%= host %>/dataset?job=<%= job %>&name=<%= name %>&mime=<%= mime %>" type="video/<%= mime %>" --> 
@@ -24,7 +24,7 @@
 	  </video>
 	</div>
 
- 	<div id="contributionPanel" class="player" style="align-items:center; text-align:center;display:log;">
+ 	<div id="contributionPanel" class="player" style="align-items:center; text-align:center;display:log;position: absolute;left:900px">
 		<p align=center><span id='msg'>O que identificou ?</span></p>
 		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
 		<p align=center><button class="Button"  onClick="sendContribution()">Send Contribution</button></p>

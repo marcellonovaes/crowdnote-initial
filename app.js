@@ -60,9 +60,6 @@ app.post('/jobs/0',Job_0.save);
 //Job 0
 app.get('/aggregation/0',function(req, res) {
 
-var Contributions_0;
-var Contributions_1;
-
 getDataset();
 
 function getDataset(){
@@ -80,44 +77,31 @@ function getContributions(Dataset){
 	}).sort({date: 1});
 }
 
-
 function processContributions(Dataset,Contributions){
-/*
+
 	var items = new Array();
 	for(var i=0; i < Dataset.length; i++){
 		items[Dataset[i]._id] = {'info':{'name':Dataset[i].name, 'start':Dataset[i].start}, contributions: new Array()};
 	}
-	
-	var contributions = new Array();
-	for(var i=0; i < Contributions_0.length; i++){
-		var microtask = Contributions_0[i].microtask;
-		var item = items[Contributions_0[i].item].info;
-		var contrib = Contributions[i].contribution;
-		var instant = Contributions[i].instant;
-		contributions[i] = {'microtask':microtask, 'item':Contributions_0[i].item, 'start':item.start, 'c0':c0, 'c1':c1};
-	}
 
-	for(var i=0; i <  contributions.length; i++){
-		var contribution = contributions[i];
-		items[contribution.item].contributions.push(contribution);
+	for(var i=0; i < Contributions.length; i++){
+		items[Contributions[i].item].contributions.push(Contributions[i]);
 	}
 
 	var points = new Array();
 	for(var i=0; i < Dataset.length; i++){
-		 var list = items[Dataset[i]._id].contributions.sort(function(a,b) {
-							var x = parseInt(a.c0, 10);
-							var y = parseInt(b.c0, 10);
+		var list = items[Dataset[i]._id].contributions.sort(function(a,b) {
+							var x = parseFloat(a.instant, 10);
+							var y = parseFloat(b.instant, 10);
 							if(x > y) 	return 1;
 							else		return -1;
 						});
-
 		var current = new Array();
 		current.push(list[0]);
-
 		for(var j=1; j < list.length; j++){
 			var it = list[j];
 
-			if( parseFloat(it.c0) - parseFloat(current[0].c0) < 1){
+			if( parseFloat(it.instant) - parseFloat(current[0].instant) < 1){
 				current.push(it);
 			}else{
 				points.push(current);
@@ -128,6 +112,31 @@ function processContributions(Dataset,Contributions){
 		}
 		points.push(current);
 	}
+
+	var idx=0;
+	for(var i=0; i < points.length; i++){
+		var totalTime=0;
+		var sugestions = points[i];
+		for(var j=0; j < sugestions.length; j++){
+			var sugestion = sugestions[j];
+			totalTime += parseFloat(sugestion.instant);
+		}
+		var instant = totalTime / sugestions.length;
+		console.log('Microtask:'+sugestion.microtask);
+		console.log('Item:'+sugestion.item);
+		console.log('Instant: '+instant);
+		for(var j=0; j < sugestions.length; j++){
+			var sugestion = sugestions[j];
+			console.log('#'+idx+':'+sugestion.contribution);
+			idx++;
+		}
+		console.log('---------------');
+	}
+
+
+/*
+
+
 
 	var idx=0;
 	for(var i=0; i < points.length; i++){

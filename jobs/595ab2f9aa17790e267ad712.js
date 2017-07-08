@@ -43,7 +43,7 @@ function job_595ab2f9aa17790e267ad712(Fingerprint,Jobs,Contributions, lifos, fif
 				if (err) return console.error(err);
 
 				//Already contributed for all items
-				if(Contributions.length/2 == lifos[id].getItems().length + fifos[id].getItems().length){
+				if(Contributions.length == lifos[id].getItems().length + fifos[id].getItems().length){
 					res.render('finish', {});
 					return null;
 				}
@@ -94,7 +94,6 @@ function job_595ab2f9aa17790e267ad712(Fingerprint,Jobs,Contributions, lifos, fif
 				values.v64 = v64;
 
 				values.host = host;
-				values.item = item;
 				values.item_id = item._id;
 				values.job = item.job;
 				values.name = item.name;

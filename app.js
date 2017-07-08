@@ -52,99 +52,14 @@ app.get('/', function(req, res) {
 
 // Job 0
 var Job_0 = require('./jobs/595ab2f9aa17790e267ad712.js');
-Job_0 = new Job_0.job_595ab2f9aa17790e267ad712(Fingerprint, Jobs, Contributions, lifos, fifos, host);
+Job_0 = new Job_0.job_595ab2f9aa17790e267ad712(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
 app.get('/jobs/0',Job_0.show);
 app.post('/jobs/0',Job_0.save);
 
 //------------------------ Aggragation --------------------------------
 
 //Job 0
-app.get('/aggregation/0',function(req, res) {
-
-getDataset();
-
-function getDataset(){
-	Dataset.find({},function (err, Dataset) {
-		if (err) return console.error(err);
-		getContributions(Dataset);
-	}).sort({_id: 1});
-}
-
-
-function getContributions(Dataset){
-	Contributions.find({microtask : '5956e7825d39ebf26fb71ee0'},function (err, Contributions) {
-		if (err) return console.error(err);
-		processContributions(Dataset,Contributions);
-	}).sort({date: 1});
-}
-
-function processContributions(Dataset,Contributions){
-
-	var items = new Array();
-	for(var i=0; i < Dataset.length; i++){
-		items[Dataset[i]._id] = {'info':{'name':Dataset[i].name, 'start':Dataset[i].start}, contributions: new Array()};
-	}
-
-	for(var i=0; i < Contributions.length; i++){
-		items[Contributions[i].item].contributions.push(Contributions[i]);
-	}
-
-	var points = new Array();
-	for(var i=0; i < Dataset.length; i++){
-		var list = items[Dataset[i]._id].contributions.sort(function(a,b) {
-							var x = parseFloat(a.instant, 10);
-							var y = parseFloat(b.instant, 10);
-							if(x > y) 	return 1;
-							else		return -1;
-						});
-		var current = new Array();
-		current.push(list[0]);
-		for(var j=1; j < list.length; j++){
-			var it = list[j];
-
-			if( parseFloat(it.instant) - parseFloat(current[0].instant) < 1.5){
-				current.push(it);
-			}else{
-				points.push(current);
-				current = new Array();
-				current.push(it);
-			}
-
-		}
-		points.push(current);
-	}
-
-	for(var i=0; i < points.length; i++){
-		var totalTime=0;
-		var sugestions = points[i];
-
-		var bigger = sugestions[0].contribution;
-		for(var j=0; j < sugestions.length; j++){
-			var sugestion = sugestions[j];
-			totalTime += parseFloat(sugestion.instant);
-
-			if(parseFloat(sugestion.contribution) > parseFloat(bigger)){
-				bigger = sugestion.contribution;
-			}
-
-
-		}
-		var instant = totalTime / sugestions.length;
-
-		var query = {'microtask':sugestion.microtask , 'item':sugestion.item , 'contribution':sugestion.contribution, 'instant': instant,'date': new Date() };	
-
-		var aggregation = new Aggregation(query);
-
-		aggregation.save(function (err, m0) {if (err) return console.error(err);});
-
-
-	}
-
-}
-
-	
-
-});
+app.get('/aggregation/0',Job_0.aggregation);
 
 
 

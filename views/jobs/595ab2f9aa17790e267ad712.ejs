@@ -27,7 +27,7 @@ Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e cliq
 	</div>
 
  	<div id="contributionPanel" class="player">
-		<p align=center><span id='msg'>O que identificou ?</span></p>
+		<p align=center><span id='msg' style='text-align: justify;font-size:18px;'>O que identificou ?</span></p>
 		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
 		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
 	</div>
@@ -47,7 +47,7 @@ function isMobile(){
 	return false;
 }
 		var hvideo =  0.45 * $(window).width();
-		document.getElementById("banner").style = 'width:'+1.5*hvideo+'px;height:130px;background-color : #eeeeee;text-align: justify;font-size:18px;padding:11px;';
+		document.getElementById("banner").style = 'width:'+1.5*hvideo+'px;height:'+(18*7 +11)+'px;background-color : #eeeeee;text-align: justify;font-size:18px;padding:11px;';
 		var flag = false;
 		if(parseFloat(document.getElementById("banner").style.width) < 420 || isMobile()==true ){
 			hvideo = parseFloat(document.getElementById("banner").style.width)-30;

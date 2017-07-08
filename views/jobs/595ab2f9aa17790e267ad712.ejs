@@ -47,9 +47,11 @@ function isMobile(){
 	return false;
 }
 		var hvideo =  0.45 * $(window).width();
-		document.getElementById("banner").style = 'width:'+1.5*hvideo+'px;height:110px;background-color : #eeeeee;text-align: justify;font-size:18px;padding:11px;';
+		document.getElementById("banner").style = 'width:'+1.5*hvideo+'px;height:130px;background-color : #eeeeee;text-align: justify;font-size:18px;padding:11px;';
+		var flag = false;
 		if(parseFloat(document.getElementById("banner").style.width) < 420 || isMobile()==true ){
 			hvideo = parseFloat(document.getElementById("banner").style.width)-30;
+			flag = true;
 		}
 
 		video.width = hvideo;
@@ -57,7 +59,11 @@ function isMobile(){
 		
 		var x = parseFloat(document.getElementById("banner").style.width) - hvideo - 70; 
 
-		document.getElementById("contrib").style = 'width:'+x+'px;';
+		if(flag){
+			document.getElementById("contrib").style = 'width:'+hvideo+'px;';
+		}else{
+			document.getElementById("contrib").style = 'width:'+x+'px;';
+		}
 
 		x =  (parseFloat($(window).width())  - parseFloat(document.getElementById("banner").style.width))/2;
 		document.getElementById("panel").style = 'width:'+document.getElementById("banner").style.width+';position:absolute;left:'+x+'px';

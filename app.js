@@ -51,7 +51,7 @@ app.get('/', function(req, res) {
 
 // Job 0
 var Job_0 = require('./jobs/595ab2f9aa17790e267ad712.js');
-Job_0 = new Job_0.job_595ab2f9aa17790e267ad712(Fingerprint, Microtasks, Jobs, Contributions, lifos, fifos, host);
+Job_0 = new Job_0.job_595ab2f9aa17790e267ad712(Fingerprint, Jobs, Contributions, lifos, fifos, host);
 app.get('/jobs/0',Job_0.show);
 app.post('/jobs/0',Job_0.save);
 
@@ -68,27 +68,21 @@ getDataset();
 function getDataset(){
 	Dataset.find({},function (err, Dataset) {
 		if (err) return console.error(err);
-		getContributions_0(Dataset);
+		getContributions(Dataset);
 	}).sort({_id: 1});
 }
 
 
-function getContributions_0(Dataset){
+function getContributions(Dataset){
 	Contributions.find({microtask : '5956e7825d39ebf26fb71ee0'},function (err, Contributions) {
 		if (err) return console.error(err);
-		getContributions_1(Dataset,Contributions);
+		processContributions(Dataset,Contributions);
 	}).sort({date: 1});
 }
 
-function getContributions_1(Dataset,Contributions_0){
-	Contributions.find({microtask : '595ab37eaa17790e267ad714'},function (err, Contributions) {
-		if (err) return console.error(err);
-		processContributions(Dataset,Contributions_0,Contributions);
-	}).sort({date: 1});
-}
 
-function processContributions(Dataset,Contributions_0,Contributions_1){
-
+function processContributions(Dataset,Contributions){
+/*
 	var items = new Array();
 	for(var i=0; i < Dataset.length; i++){
 		items[Dataset[i]._id] = {'info':{'name':Dataset[i].name, 'start':Dataset[i].start}, contributions: new Array()};
@@ -96,10 +90,11 @@ function processContributions(Dataset,Contributions_0,Contributions_1){
 	
 	var contributions = new Array();
 	for(var i=0; i < Contributions_0.length; i++){
+		var microtask = Contributions_0[i].microtask;
 		var item = items[Contributions_0[i].item].info;
-		var c0 = Contributions_0[i].contribution;
-		var c1 = Contributions_1[i].contribution;
-		contributions[i] = {'item':Contributions_0[i].item, 'start':item.start, 'c0':c0, 'c1':c1};
+		var contrib = Contributions[i].contribution;
+		var instant = Contributions[i].instant;
+		contributions[i] = {'microtask':microtask, 'item':Contributions_0[i].item, 'start':item.start, 'c0':c0, 'c1':c1};
 	}
 
 	for(var i=0; i <  contributions.length; i++){
@@ -134,11 +129,25 @@ function processContributions(Dataset,Contributions_0,Contributions_1){
 		points.push(current);
 	}
 
+	var idx=0;
 	for(var i=0; i < points.length; i++){
-		console.log(points[i]);
+		var totalTime=0;
+		var sugestions = points[i];
+		for(var j=0; j < sugestions.length; j++){
+			var sugestion = sugestions[j];
+			totalTime += parseFloat(sugestion.c0);
+		}
+		var start = totalTime / sugestions.length;
+		console.log('#Microtask:'+sugestion.microtask);
+		console.log('Start: '+start);
+		for(var j=0; j < sugestions.length; j++){
+			var sugestion = sugestions[j];
+			console.log('#'+idx+':'+sugestion.c1);
+			idx++;
+		}
 		console.log('---------------');
 	}
-
+*/
 
 /*
 	var values = {};
@@ -221,6 +230,7 @@ function compileSchemas(){
     		microtask: ObjectId,
     		item: ObjectId,
     		contribution: String,
+    		instant: String,
 		date : Date,
 		fingerprint: String 
 	});

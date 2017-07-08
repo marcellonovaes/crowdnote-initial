@@ -1,12 +1,11 @@
 
-function job_595ab2f9aa17790e267ad712(Fingerprint,Microtasks,Jobs,Contributions, lifos, fifos, host){
+function job_595ab2f9aa17790e267ad712(Fingerprint,Jobs,Contributions, lifos, fifos, host){
 
 	var fs = require('fs');
 	
 	this.lifos = lifos;
 	this.fifos = fifos;
 	this.Fingerprint = Fingerprint;
-	this.Microtasks = Microtasks;
 	this.Contributions = Contributions;
 	this.host = host;
 
@@ -23,16 +22,13 @@ function job_595ab2f9aa17790e267ad712(Fingerprint,Microtasks,Jobs,Contributions,
 	function save(req, res) {
 		var item = req.body.item;
 		var fingerprint = req.body.fingerprint;
-  		var m0_id = req.body.m0_id;
-  		var m0_contrib = req.body.m0_contrib;
- 		var m1_id = req.body.m1_id;
-  		var m1_contrib = req.body.m1_contrib;
+  		var microtask = req.body.microtask;
+  		var contrib = req.body.contrib;
+		var instant = req.body.instant;
 
-		var c0 = new Contributions({'item':item , 'microtask':m0_id , 'contribution':m0_contrib, 'date': new Date(), 'fingerprint':fingerprint });
-		var c1 = new Contributions({'item':item , 'microtask':m1_id , 'contribution':m1_contrib, 'date': new Date(), 'fingerprint':fingerprint });
+		var contribution = new Contributions({'item':item , 'microtask':microtask , 'contribution':contrib, 'instant': instant,'date': new Date(), 'fingerprint':fingerprint });
 
-		c0.save(function (err, m0) {if (err) return console.error(err);});
-		c1.save(function (err, m1) {if (err) return console.error(err);});
+		contribution.save(function (err, m0) {if (err) return console.error(err);});
 
 		show(req, res);
 	}
@@ -42,9 +38,6 @@ function job_595ab2f9aa17790e267ad712(Fingerprint,Microtasks,Jobs,Contributions,
 		var tmp = new Array();
 		var fingerprint = Fingerprint.get(req);
 
-
-		Microtasks.find({job : '595ab2f9aa17790e267ad712'},function (err, Microtasks) {
-			if (err) return console.error(err);
 
 			Contributions.find({fingerprint: fingerprint},function (err, Contributions) {
 				if (err) return console.error(err);
@@ -109,15 +102,13 @@ function job_595ab2f9aa17790e267ad712(Fingerprint,Microtasks,Jobs,Contributions,
 				values.start = item.start;
 				values.stop = item.stop;
 
-				values.m0_id = Microtasks[0]._id;
-				values.m1_id = Microtasks[1]._id;
+				values.microtask = '5956e7825d39ebf26fb71ee0';
 
 				values.instruction = Job.instruction;
 
 				res.render('jobs/'+item.job, values);
 
-			}).sort({_id: -1});
-		});
+			});
 
 	}
 

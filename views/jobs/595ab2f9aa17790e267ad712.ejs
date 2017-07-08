@@ -9,32 +9,62 @@
 <center>
 <div class="w3-card-4 w3-margin w3-white" style="padding:1px;">
 <p>
-<textarea align="center" id="banner" class="instructions" readonly style="width:810;height:100; background-color : #eeeeee;text-align: justify;font-size:18px;padding:20px;">
-<%= instruction %>
+<textarea align="center" id="banner" class="instructions" readonly>
+Identifique no trecho de vídeo um ponto sobre o qual gostaria de mais informação ou ver algum conteúdo adicional como videos, imagens, páginas, explicações etc. 
+
+Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e clique em Enviar.
 </textarea>
 </p>
 
+<div id='panel' >
 <p align=center>
-	<div class="player"  style="position: absolute;left:200px">
-	  <video id="video" width="600" controls  preload>
+	<div class="player" id="player" >
+	  <video id="video" controls  preload>
 		<source src="data:video/<%= mime %>;base64,<%= v64 %>" type="video/<%= mime %>"> 
 		<!-- source src="http://<%= host %>/dataset?job=<%= job %>&name=<%= name %>&mime=<%= mime %>" type="video/<%= mime %>" --> 
  	   	Your browser does not support HTML5 video.
 	  </video>
 	</div>
 
- 	<div id="contributionPanel" class="player" style="align-items:center; text-align:center;display:log;position: absolute;left:900px">
+ 	<div id="contributionPanel" class="player">
 		<p align=center><span id='msg'>O que identificou ?</span></p>
 		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
-		<p align=center><button class="Button" id='bt'  onClick="sendContribution()">Send Contribution</button></p>
+		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
 	</div>
 
 </p>
-
+</div>
 
 	<script>
-		var video = document.getElementById('video');
+function isMobile(){
 		
+	var video = document.getElementById('video');
+
+	var userAgent = navigator.userAgent.toLowerCase();
+	if( userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i)!= -1 )
+		return true;
+
+	return false;
+}
+		var hvideo =  0.45 * $(window).width();
+		document.getElementById("banner").style = 'width:'+1.5*hvideo+'px;height:110px;background-color : #eeeeee;text-align: justify;font-size:18px;padding:11px;';
+		if(parseFloat(document.getElementById("banner").style.width) < 420 || isMobile()==true ){
+			hvideo = parseFloat(document.getElementById("banner").style.width)-30;
+		}
+
+		video.width = hvideo;
+		video.height = hvideo/1.778;
+		
+		var x = parseFloat(document.getElementById("banner").style.width) - hvideo - 70; 
+
+		document.getElementById("contrib").style = 'width:'+x+'px;';
+
+		x =  (parseFloat($(window).width())  - parseFloat(document.getElementById("banner").style.width))/2;
+		document.getElementById("panel").style = 'width:'+document.getElementById("banner").style.width+';position:absolute;left:'+x+'px';
+
+
+
+
 		video.addEventListener('loadedmetadata', function() {
     			video.currentTime = Math.random() * video.duration -3;
 		});

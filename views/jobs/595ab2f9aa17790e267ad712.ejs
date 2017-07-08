@@ -27,7 +27,7 @@
  	<div id="contributionPanel" class="player" style="align-items:center; text-align:center;display:log;position: absolute;left:900px">
 		<p align=center><span id='msg'>O que identificou ?</span></p>
 		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
-		<p align=center><button class="Button"  onClick="sendContribution()">Send Contribution</button></p>
+		<p align=center><button class="Button" id='bt'  onClick="sendContribution()">Send Contribution</button></p>
 	</div>
 
 </p>
@@ -35,6 +35,11 @@
 
 	<script>
 		var video = document.getElementById('video');
+		
+		video.addEventListener('loadedmetadata', function() {
+    			video.currentTime = Math.random() * video.duration -1;
+		});
+
 
 		function sendContribution(){
 
@@ -51,8 +56,12 @@
 				queryForm += "<input type='hidden' id='m1_contrib' name='m1_contrib' value='"+contrib.value+"' >";
 				queryForm += "</form>";
 
-				$(queryForm).appendTo('body').submit();
-
+				$.ajax({
+  					type: 'POST',
+  					url: $(queryForm).attr("action"),
+  					data: $(queryForm).serialize(), 
+ 					success: function(response) {contrib.value = ''}
+				});
 			}else{
 				document.getElementById("msg").style.color = "#ff0000";
 			}

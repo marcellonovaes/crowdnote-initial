@@ -27,6 +27,7 @@ var jobsSchema, Jobs;
 var microtasksSchema, Microtasks;
 var datasetsSchema, Dataset;
 var contributionsSchema, Contributions;
+var aggregationSchema,Aggregation;
 var Schema = mongoose.Schema; 
 var ObjectId = Schema.ObjectId;
 var Timestamp = Schema.Timestamp;
@@ -101,7 +102,7 @@ function processContributions(Dataset,Contributions){
 		for(var j=1; j < list.length; j++){
 			var it = list[j];
 
-			if( parseFloat(it.instant) - parseFloat(current[0].instant) < 1){
+			if( parseFloat(it.instant) - parseFloat(current[0].instant) < 1.5){
 				current.push(it);
 			}else{
 				points.push(current);
@@ -113,58 +114,32 @@ function processContributions(Dataset,Contributions){
 		points.push(current);
 	}
 
-	var idx=0;
 	for(var i=0; i < points.length; i++){
 		var totalTime=0;
 		var sugestions = points[i];
+
+		var bigger = sugestions[0].contribution;
 		for(var j=0; j < sugestions.length; j++){
 			var sugestion = sugestions[j];
 			totalTime += parseFloat(sugestion.instant);
+
+			if(parseFloat(sugestion.contribution) > parseFloat(bigger)){
+				bigger = sugestion.contribution;
+			}
+
+
 		}
 		var instant = totalTime / sugestions.length;
-		console.log('Microtask:'+sugestion.microtask);
-		console.log('Item:'+sugestion.item);
-		console.log('Instant: '+instant);
-		for(var j=0; j < sugestions.length; j++){
-			var sugestion = sugestions[j];
-			console.log('#'+idx+':'+sugestion.contribution);
-			idx++;
-		}
-		console.log('---------------');
+
+		var query = {'microtask':sugestion.microtask , 'item':sugestion.item , 'contribution':sugestion.contribution, 'instant': instant,'date': new Date() };	
+
+		var aggregation = new Aggregation(query);
+
+		aggregation.save(function (err, m0) {if (err) return console.error(err);});
+
+
 	}
 
-
-/*
-
-
-
-	var idx=0;
-	for(var i=0; i < points.length; i++){
-		var totalTime=0;
-		var sugestions = points[i];
-		for(var j=0; j < sugestions.length; j++){
-			var sugestion = sugestions[j];
-			totalTime += parseFloat(sugestion.c0);
-		}
-		var start = totalTime / sugestions.length;
-		console.log('#Microtask:'+sugestion.microtask);
-		console.log('Start: '+start);
-		for(var j=0; j < sugestions.length; j++){
-			var sugestion = sugestions[j];
-			console.log('#'+idx+':'+sugestion.c1);
-			idx++;
-		}
-		console.log('---------------');
-	}
-*/
-
-/*
-	var values = {};
-	values.log = current;
-
-	res.render('aggregation/'+item.job, values);
-*/
-	
 }
 
 	
@@ -244,6 +219,16 @@ function compileSchemas(){
 		fingerprint: String 
 	});
 	Contributions = mongoose.model('Contributions', contributionsSchema);
+
+	aggregationSchema = Schema({
+    		microtask: ObjectId,
+    		item: ObjectId,
+    		contribution: String,
+    		instant: String,
+		date : Date,
+	});
+	Aggregation = mongoose.model('Aggregation', aggregationSchema);
+
 
 }
 

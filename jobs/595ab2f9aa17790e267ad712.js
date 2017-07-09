@@ -1,11 +1,10 @@
 
-function job(Dataset,Fingerprint,Jobs,Aggregation,Contributions, lifos, fifos, host){
+function job(Dataset,Fingerprint,Jobs,Aggregation,Contributions, dataset, host){
 
 	var fs = require('fs');
 	
 	this.Dataset = Dataset;
-	this.lifos = lifos;
-	this.fifos = fifos;
+	this.dataset = dataset;
 	this.Fingerprint = Fingerprint;
 	this.Contributions = Contributions;
 	this.host = host;
@@ -45,30 +44,30 @@ function job(Dataset,Fingerprint,Jobs,Aggregation,Contributions, lifos, fifos, h
 			if (err) return console.error(err);
 
 			//Already contributed for all items
-			if(Contributions.length == lifos[id].getItems().length + fifos[id].getItems().length){
+			if(Contributions.length == dataset.lifo.getItems().length + dataset.fifo.getItems().length){
 				res.render('finish', {});
 				return null;
 			}
 
 			//Find an item witch didn't recieve contribution from this user
-			var item = lifos[id].pop();
+			var item = dataset.lifo.pop();
 			var did = true;
 			while(did){
-				if(lifos[id].isEmpty()){
-					var items = fifos[id].getItems().sort(function(a,b) {
+				if(dataset.lifo.isEmpty()){
+					var items = dataset.fifo.getItems().sort(function(a,b) {
 										var x = parseInt(a._id, 10);
 										var y = parseInt(b._id, 10);
 										if(x > y) 	return -1;
 										else		return 1;
 									});
-					lifos[id].setItems(items);
-					fifos[id].clean();	
+					dataset.lifo.setItems(items);
+					dataset.fifo.clean();	
 				}
 				var did = false;
 				for(var i=0; i < Contributions.length; i++){
 					if(Contributions[i].item.toString('utf-8').trim() == item._id.toString('utf-8').trim()){
 						tmp.push(item);
-						item = lifos[id].pop();
+						item = dataset.lifo.pop();
 						did = true;
 						break;
 					}
@@ -77,10 +76,10 @@ function job(Dataset,Fingerprint,Jobs,Aggregation,Contributions, lifos, fifos, h
 			//empilha de novo os que ja tinham recebido contribuicao deste user
 			tmp = tmp.reverse();
 			for(var i=0; i < tmp.length; i++){
-				lifos[id].push(tmp[i]);
+				dataset.lifo.push(tmp[i]);
 			}
-			lifos[id].setItems(lifos[id].getItems());
-			fifos[id].push(item);
+			dataset.lifo.setItems(dataset.lifo.getItems());
+			dataset.fifo.push(item);
 
 			var values = {};
 			values.fingerprint = fingerprint;

@@ -12,8 +12,10 @@ app.set('view engine', 'ejs');
 var bodyParser = require('body-parser')
 
 var util = require('./util/util.js');
-var lifos = new Array();
-var fifos = new Array();
+var dataset = {'lifo':null, 'fifo':null}; 
+
+var aggregated = new Array();
+
 var Fingerprint = new util.Fingerprint();
 
 var mongoose = require('mongoose');
@@ -36,8 +38,8 @@ var Timestamp = Schema.Timestamp;
 // ---------------------  Init Functions -----------------------------
 
 compileSchemas();
-loadDatasets();
-
+loadDataset();
+loadAggregated();
 
 app.use( bodyParser.json() );      
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -57,14 +59,16 @@ app.get('/', function(req, res) {
 
 // Job 0
 var Job_0 = require('./jobs/595ab2f9aa17790e267ad712.js');
-Job_0 = new Job_0.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
+Job_0 = new Job_0.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, dataset, host);
 app.get('/jobs/0',Job_0.show);
 app.post('/jobs/0',Job_0.save);
 
+//Job 1
 var Job_1 = require('./jobs/59622715494b3d40ff4284a9.js');
-Job_1 = new Job_1.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
+Job_1 = new Job_1.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, dataset, aggregated, host);
 app.get('/jobs/1',Job_1.show);
 app.post('/jobs/1',Job_1.save);
+
 
 //------------------------ Aggragation --------------------------------
 
@@ -157,30 +161,54 @@ function compileSchemas(){
 
 }
 
-function loadDatasets(){
-	Jobs.find({},function (err, Jobs) {
+function loadDataset(){
+
+	dataset.lifo = new util.LIFO();
+	dataset.fifo = new util.FIFO();
+
+	Dataset.find({},function (err, Dataset) {
   		if (err) return console.error(err);
 
-  		for(i=0; i < Jobs.length; i++){
-
-  			loadDataset(Jobs[i],i);
-
-		}
-
-	}).sort({order: 1});
-}
-
-function loadDataset(Job,id){
-
-	lifos[id] = new util.LIFO();
-	fifos[id] = new util.FIFO();
-
-	Dataset.find({job: Job._id},function (err, Dataset) {
-  		if (err) return console.error(err);
-
-		lifos[id].setItems(Dataset.reverse());
+		dataset.lifo.setItems(Dataset.reverse());
 
 	});
+}
+
+function loadAggregated(){
+	Aggregation.find({},function (err, Aggregation) {
+  		if (err) return console.error(err);
+
+		aggregated = organizeAggregated(Aggregation.reverse());
+
+	}).sort({microtask : 1});
+}
+
+function organizeAggregated(list){
+	if(list.length < 1) return null;
+
+	aggregated.push({'lifo': new util.LIFO(), 'fifo': new util.FIFO()});
+
+	var lifo; 
+	var items = new Array()
+
+	var item = list[0];	
+	items.push(item);
+
+	for(var i=1; i < list.length; i++){
+
+		if(parseFloat(list[i].microtask) != parseFloat(item.microtask)){
+			lifo = new util.LIFO();
+			lifo.setItems(items);
+			aggregated.push({'lifo': lifo, 'fifo': new util.FIFO()});
+			items = new Array();
+		}
+
+		item = list[i];		
+		items.push(item);
+	}
+	lifo = new util.LIFO();
+	lifo.setItems(items.reverse());
+	aggregated.push({'lifo': lifo, 'fifo': new util.FIFO()});
 }
 
 // Exec as sudo to run in port 80

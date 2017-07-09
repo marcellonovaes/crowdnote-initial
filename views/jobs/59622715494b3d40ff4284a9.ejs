@@ -10,16 +10,17 @@
 <div class="w3-card-4 w3-margin w3-white" style="padding:1px;">
 <p>
 <textarea align="center" id="banner" class="instructions" readonly>
-Identifique no trecho de vídeo um ponto sobre o qual gostaria de mais informação ou ver algum conteúdo adicional como videos, imagens, páginas, explicações etc. 
+Ajude a explicar o ponto de interesse: "<%= point %>"
 
-Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e clique em Enviar.
+Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo do Youtube ou ainda uma página da Wikipedia.
+
 </textarea>
 </p>
 
 <div id='panel' >
 <p align=center>
 	<div class="player" id="player" >
-	  <video id="video" controls  preload>
+	  <video id="video" controls  preload style='box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);-moz-box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);-webkit-box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);'>
 		<source src="data:video/<%= mime %>;base64,<%= v64 %>" type="video/<%= mime %>"> 
 		<!-- source src="http://<%= host %>/dataset?job=<%= job %>&name=<%= name %>&mime=<%= mime %>" type="video/<%= mime %>" --> 
  	   	Your browser does not support HTML5 video.
@@ -27,17 +28,107 @@ Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e cliq
 	</div>
 
  	<div id="contributionPanel" class="player">
-		<p align=center><span id='msg' style='text-align: justify;font-size:18px;'>O que identificou ?</span></p>
-		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
+		
+
+
+		<p align= "left"><input onChange="getOption(1)" checked class="option"  type="radio" name="sugestion_type" value="1"> Um texto explicativo</input></p>
+		<p align= "left"><input onChange="getOption(2)" class="option"  type="radio" name="sugestion_type" value="1"> Uma imagem</input></p>
+		<p align= "left"><input onChange="getOption(3)" class="option"  type="radio" name="sugestion_type" value="1"> Um vídeo do Youtube</input></p>
+		<p align= "left"><input onChange="getOption(4)" class="option"  type="radio" name="sugestion_type" value="1"> Uma página da Wikipedia</input></p>
+		<p align=center id='contribPanel'><textarea align="center" class="answer"  id='contrib' name='contrib' placeholder="Escreva um texto explicativo aqui." ></textarea></p>
+
 		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
+		<p align=center><button class="Button" id='other'    onClick="location.reload();">Não sei</button></p>
 	</div>
 
 </p>
 </div>
 
 	<script>
+
+
+function getOption(op){
+
+	var contribPanel = document.getElementById('contribPanel');
+	var contrib = document.getElementById('contrib');
+
+	var lbImage =  document.getElementById('lbImage');
+	if(lbImage)lbImage.remove();
+
+
+	var space1 =  document.getElementById('space1');
+	if(space1)space1.remove();
+
+	var space2 =  document.getElementById('space2');
+	if(space2)space2.remove();
+
+	contrib.remove();
+
+	switch(op){
+		case 1:
+			contrib = document.createElement("textarea");
+			contrib.setAttribute("name","contrib");
+			contrib.setAttribute("id","contrib");
+ 			contrib.setAttribute("placeholder","Escreva um texto explicativo aqui.");
+			break; 
+
+		case 2:
+
+			space1 = document.createElement("div");
+			space1.setAttribute("id","space1");
+			space1.style = 'height:40px';
+			contribPanel.appendChild(space1);
+
+			lbImage = document.createElement("label");
+			lbImage.setAttribute("id","lbImage");
+			lbImage.setAttribute("for","contrib");
+			lbImage.innerHTML = "Escolha a Imagem";
+			lbImage.style.heigth = '120px';
+			contribPanel.appendChild(lbImage);
+
+			space2 = document.createElement("div");
+			space2.setAttribute("id","space2");
+			space2.style = 'height:58px';
+			contribPanel.appendChild(space2);
+
+			contrib = document.createElement("input");
+			contrib.setAttribute("name","contrib");
+			contrib.setAttribute("id","contrib");
+			contrib.setAttribute("type","file");
+			contrib.setAttribute("class","contrib");
+			contrib.setAttribute("label","Escolha a imagem");
+			contrib.setAttribute("accept","image/*");
+			contrib.setAttribute("value","Escolha a Imagem");
+			break; 
+
+		case 3:
+			contrib = document.createElement("textarea");
+			contrib.setAttribute("name","contrib");
+			contrib.setAttribute("id","contrib");
+ 			contrib.setAttribute("placeholder","Cole aqui o link do youtube. Ex:\n\nhttps://www.youtube.com/watch?v=...");
+
+			break; 
+
+		case 4:
+			contrib = document.createElement("textarea");
+			contrib.setAttribute("name","contrib");
+			contrib.setAttribute("id","contrib");
+ 			contrib.setAttribute("placeholder","Cole aqui o link da Wikipedia. Ex:\n\nhttps://pt.wikipedia.org/wiki/...");
+			break; 
+
+	}
+
+	contrib.style.width = document.getElementById("bt").style.width;
+	contrib.style.height = '120px';
+	contribPanel.appendChild(contrib);
+
+
+}
+
+
+
 function isMobile(){
-		
+	
 	var video = document.getElementById('video');
 
 	var userAgent = navigator.userAgent.toLowerCase();
@@ -60,9 +151,13 @@ function isMobile(){
 		var x = parseFloat(document.getElementById("banner").style.width) - hvideo - 70; 
 
 		if(flag){
-			document.getElementById("contrib").style = 'width:'+hvideo+'px;';
+			document.getElementById("contrib").style = 'height:120;width:'+hvideo+'px;';
+			document.getElementById("bt").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
+			document.getElementById("other").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}else{
-			document.getElementById("contrib").style = 'width:'+x+'px;';
+			document.getElementById("contrib").style = 'height:120;width:'+x+'px;';
+			document.getElementById("bt").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
+			document.getElementById("other").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}
 
 		x =  (parseFloat($(window).width())  - parseFloat(document.getElementById("banner").style.width))/2;
@@ -72,7 +167,7 @@ function isMobile(){
 
 
 		video.addEventListener('loadedmetadata', function() {
-    			video.currentTime = Math.random() * video.duration -3;
+    			video.currentTime = <%= instant %> -1;
 		});
 
 

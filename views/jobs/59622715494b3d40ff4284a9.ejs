@@ -10,7 +10,7 @@
 <div class="w3-card-4 w3-margin w3-white" style="padding:1px;">
 <p>
 <textarea align="center" id="banner" class="instructions" readonly>
-Ajude a explicar o ponto de interesse: "<%= point %>"
+Ajude a explicar o ponto de interesse: "<%= point %>".
 
 Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo do Youtube ou ainda uma página da Wikipedia.
 
@@ -99,6 +99,13 @@ function getOption(op){
 			contrib.setAttribute("label","Escolha a imagem");
 			contrib.setAttribute("accept","image/*");
 			contrib.setAttribute("value","Escolha a Imagem");
+
+contrib.addEventListener('change', function(){
+	var str = this.value;
+	if(str) lbImage.innerHTML = str.substring(str.length - 25, str.length);
+});
+
+
 			break; 
 
 		case 3:

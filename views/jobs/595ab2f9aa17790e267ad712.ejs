@@ -19,7 +19,7 @@ Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e cliq
 <div id='panel' >
 <p align=center>
 	<div class="player" id="player" >
-	  <video id="video" controls  preload>
+	  <video id="video" controls  preload style='box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);-moz-box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);-webkit-box-shadow: 12px 29px 81px 0px rgba(0,0,0,0.75);'>
 		<source src="data:video/<%= mime %>;base64,<%= v64 %>" type="video/<%= mime %>"> 
 		<!-- source src="http://<%= host %>/dataset?job=<%= job %>&name=<%= name %>&mime=<%= mime %>" type="video/<%= mime %>" --> 
  	   	Your browser does not support HTML5 video.
@@ -30,6 +30,7 @@ Pause o vídeo sobre o ponto de interesse, diga o que viu de interessante e cliq
 		<p align=center><span id='msg' style='text-align: justify;font-size:18px;'>O que identificou ?</span></p>
 		<p align=center><textarea align="center" class="answer"  id='contrib' name='contrib'></textarea></p>
 		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
+		<p align=center><button class="Button" id='other'    onClick="location.reload();">Nada nesta parte</button></p>
 	</div>
 
 </p>
@@ -61,8 +62,12 @@ function isMobile(){
 
 		if(flag){
 			document.getElementById("contrib").style = 'width:'+hvideo+'px;';
+			document.getElementById("bt").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
+			document.getElementById("other").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}else{
 			document.getElementById("contrib").style = 'width:'+x+'px;';
+			document.getElementById("bt").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
+			document.getElementById("other").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}
 
 		x =  (parseFloat($(window).width())  - parseFloat(document.getElementById("banner").style.width))/2;

@@ -37,14 +37,19 @@ var Timestamp = Schema.Timestamp;
 
 compileSchemas();
 loadDatasets();
+
+
 app.use( bodyParser.json() );      
 app.use(bodyParser.urlencoded({ extended: true })); 
 
 //-----------------------  Endpoints   -------------------------------
 
-// Homepage
+// Homepage / Active Job
 app.get('/', function(req, res) {
-  res.render('index', {title: 'Job Distribution System'});
+
+
+
+
 });
 
 
@@ -52,9 +57,14 @@ app.get('/', function(req, res) {
 
 // Job 0
 var Job_0 = require('./jobs/595ab2f9aa17790e267ad712.js');
-Job_0 = new Job_0.job_595ab2f9aa17790e267ad712(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
+Job_0 = new Job_0.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
 app.get('/jobs/0',Job_0.show);
 app.post('/jobs/0',Job_0.save);
+
+var Job_1 = require('./jobs/59622715494b3d40ff4284a9.js');
+Job_1 = new Job_1.job(Dataset, Fingerprint, Jobs, Aggregation, Contributions, lifos, fifos, host);
+app.get('/jobs/1',Job_1.show);
+app.post('/jobs/1',Job_1.save);
 
 //------------------------ Aggragation --------------------------------
 

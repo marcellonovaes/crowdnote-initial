@@ -28,7 +28,6 @@ Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo d
 	</div>
 
  	<div id="contributionPanel" class="player">
-		
 
 
 		<p align= "left"><input onChange="getOption(1)" checked class="option"  type="radio" name="sugestion_type" value="1"> Um texto explicativo</input></p>
@@ -36,6 +35,8 @@ Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo d
 		<p align= "left"><input onChange="getOption(3)" class="option"  type="radio" name="sugestion_type" value="1"> Um vídeo do Youtube</input></p>
 		<p align= "left"><input onChange="getOption(4)" class="option"  type="radio" name="sugestion_type" value="1"> Uma página da Wikipedia</input></p>
 		<p align=center id='contribPanel'><textarea align="center" class="answer"  id='contrib' name='contrib' placeholder="Escreva um texto explicativo aqui." ></textarea></p>
+
+		<img id='Image'>	
 
 		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
 		<p align=center><button class="Button" id='other'    onClick="location.reload();">Não sei</button></p>
@@ -46,6 +47,18 @@ Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo d
 
 	<script>
 
+function readURL(input,output) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            output.attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
 function getOption(op){
 
@@ -55,12 +68,8 @@ function getOption(op){
 	var lbImage =  document.getElementById('lbImage');
 	if(lbImage)lbImage.remove();
 
+	$('#Image').attr("height","0");
 
-	var space1 =  document.getElementById('space1');
-	if(space1)space1.remove();
-
-	var space2 =  document.getElementById('space2');
-	if(space2)space2.remove();
 
 	contrib.remove();
 
@@ -74,22 +83,14 @@ function getOption(op){
 
 		case 2:
 
-			space1 = document.createElement("div");
-			space1.setAttribute("id","space1");
-			space1.style = 'height:40px';
-			contribPanel.appendChild(space1);
+
+			$('#Image').attr("height","58");
 
 			lbImage = document.createElement("label");
 			lbImage.setAttribute("id","lbImage");
 			lbImage.setAttribute("for","contrib");
-			lbImage.innerHTML = "Escolha a Imagem";
-			lbImage.style.heigth = '120px';
+			lbImage.innerHTML = "Escolher Imagem";
 			contribPanel.appendChild(lbImage);
-
-			space2 = document.createElement("div");
-			space2.setAttribute("id","space2");
-			space2.style = 'height:58px';
-			contribPanel.appendChild(space2);
 
 			contrib = document.createElement("input");
 			contrib.setAttribute("name","contrib");
@@ -100,10 +101,14 @@ function getOption(op){
 			contrib.setAttribute("accept","image/*");
 			contrib.setAttribute("value","Escolha a Imagem");
 
-contrib.addEventListener('change', function(){
-	var str = this.value;
-	if(str) lbImage.innerHTML = str.substring(str.length - 25, str.length);
-});
+			contrib.addEventListener('change', function(){
+				var str = this.value;
+				readURL(this,$('#Image'));
+				if(str) lbImage.innerHTML = 'Trocar a Imagem';
+				//if(str) lbImage.innerHTML = str.substring(str.length - 23, str.length);
+			});
+	
+
 
 
 			break; 
@@ -112,7 +117,7 @@ contrib.addEventListener('change', function(){
 			contrib = document.createElement("textarea");
 			contrib.setAttribute("name","contrib");
 			contrib.setAttribute("id","contrib");
- 			contrib.setAttribute("placeholder","Cole aqui o link do youtube. Ex:\n\nhttps://www.youtube.com/watch?v=...");
+ 			contrib.setAttribute("placeholder","Cole aqui o link do youtube.\nEx:\nhttps://www.youtube.com/watch?v=...");
 
 			break; 
 
@@ -120,13 +125,13 @@ contrib.addEventListener('change', function(){
 			contrib = document.createElement("textarea");
 			contrib.setAttribute("name","contrib");
 			contrib.setAttribute("id","contrib");
- 			contrib.setAttribute("placeholder","Cole aqui o link da Wikipedia. Ex:\n\nhttps://pt.wikipedia.org/wiki/...");
+ 			contrib.setAttribute("placeholder","Cole aqui o link da Wikipedia. Ex:\nhttps://pt.wikipedia.org/wiki/...");
 			break; 
 
 	}
 
 	contrib.style.width = document.getElementById("bt").style.width;
-	contrib.style.height = '120px';
+	contrib.style.height = '75px';
 	contribPanel.appendChild(contrib);
 
 
@@ -158,11 +163,11 @@ function isMobile(){
 		var x = parseFloat(document.getElementById("banner").style.width) - hvideo - 70; 
 
 		if(flag){
-			document.getElementById("contrib").style = 'height:120;width:'+hvideo+'px;';
+			document.getElementById("contrib").style = 'height:75;width:'+hvideo+'px;';
 			document.getElementById("bt").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 			document.getElementById("other").style = 'width:'+hvideo+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}else{
-			document.getElementById("contrib").style = 'height:120;width:'+x+'px;';
+			document.getElementById("contrib").style = 'height:75;width:'+x+'px;';
 			document.getElementById("bt").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 			document.getElementById("other").style = 'width:'+x+'px;height:40px;background: none;color: #ffffff;font-size:18px;padding:1px;box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);-moz-box-shadow:  0px 0px 81px 0px rgba(0,0,0,0.05);-webkit-box-shadow: 0px 0px 81px 0px rgba(0,0,0,0.05);background-image: linear-gradient(45deg, black, red);';
 		}

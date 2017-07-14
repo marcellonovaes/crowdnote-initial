@@ -25,9 +25,12 @@ function job(Dataset,Fingerprint,Jobs,Aggregation,Contributions, dataset, aggreg
 		var fingerprint = req.body.fingerprint;
   		var microtask = req.body.microtask;
   		var contrib = req.body.contrib;
+  		var type = req.body.type;
 		var instant = req.body.instant;
 
-		var contribution = new Contributions({'item':item , 'microtask':microtask , 'contribution':contrib, 'instant': instant,'date': new Date(), 'fingerprint':fingerprint });
+
+		var contribution = new Contributions({'item':item , 'microtask':microtask , 'contribution':contrib,'type':type, 'instant': instant,'date': new Date(), 'fingerprint':fingerprint });
+
 
 		contribution.save(function (err, m0) {if (err) return console.error(err);});
 

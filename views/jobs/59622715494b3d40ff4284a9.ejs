@@ -30,14 +30,14 @@ Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo d
  	<div id="contributionPanel" class="player">
 
 
-		<p align= "left"><input onChange="getOption(1)" checked class="option"  type="radio" name="sugestion_type" value="1"> Um texto explicativo</input></p>
-		<p align= "left"><input onChange="getOption(2)" class="option"  type="radio" name="sugestion_type" value="1"> Uma imagem</input></p>
-		<p align= "left"><input onChange="getOption(3)" class="option"  type="radio" name="sugestion_type" value="1"> Um vídeo do Youtube</input></p>
-		<p align= "left"><input onChange="getOption(4)" class="option"  type="radio" name="sugestion_type" value="1"> Uma página da Wikipedia</input></p>
+		<p align= "left"><input onChange="getOption(1)" checked class="option"  type="radio" id="type" name="type" value="text"> Um texto explicativo</input></p>
+		<p align= "left"><input onChange="getOption(2)" class="option"  type="radio"  id="type" name="type" value="image"> Uma imagem</input></p>
+		<p align= "left"><input onChange="getOption(3)" class="option"  type="radio"  id="type" name="type" value="youtube"> Um vídeo do Youtube</input></p>
+		<p align= "left"><input onChange="getOption(4)" class="option"  type="radio"  id="type" name="type" value="wikipedia"> Uma página da Wikipedia</input></p>
 		<p align=center id='contribPanel'><textarea align="center" class="answer"  id='contrib' name='contrib' placeholder="Escreva um texto explicativo aqui." ></textarea></p>
 
 		<img id='Image'>	
-
+		
 		<p align=center><button class="Button" id='bt'    onClick="sendContribution()">Enviar</button></p>
 		<p align=center><button class="Button" id='other'    onClick="location.reload();">Não sei</button></p>
 	</div>
@@ -47,13 +47,15 @@ Você pode escrever um texto explicativo, enviar uma imagem, sugerir um vídeo d
 
 	<script>
 
+
+
 function readURL(input,output) {
 
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            output.attr('src', e.target.result);
+            	output.attr('src', e.target.result);
         }
 
         reader.readAsDataURL(input.files[0]);
@@ -105,7 +107,6 @@ function getOption(op){
 				var str = this.value;
 				readURL(this,$('#Image'));
 				if(str) lbImage.innerHTML = 'Trocar a Imagem';
-				//if(str) lbImage.innerHTML = str.substring(str.length - 23, str.length);
 			});
 	
 
@@ -186,6 +187,7 @@ function isMobile(){
 		function sendContribution(){
 
 			var contrib = document.getElementById("contrib");
+			var type = document.getElementById("type");
 
 			if(contrib.value != ''){
 
@@ -194,7 +196,10 @@ function isMobile(){
 				queryForm += "<input type='hidden' id='fingerprint' name='fingerprint' value='<%= fingerprint %>' >";
 				queryForm += " <input type='hidden' id='microtask' name='microtask' value='<%= microtask %>' >";
 				queryForm += "<input type='hidden' id='instant' name='instant'  value='"+video.currentTime+"' > ";
-				queryForm += "<input type='hidden' id='contrib' name='contrib'  value='"+contrib.value+"' > ";
+				queryForm += "<input type='hidden' id='type' name='type'  value='"+type.value+"' > ";
+
+				queryForm += "<input type='hidden' id='image' name='contrib'  value='"+document.getElementById("Image").src+"' > ";
+
 				queryForm += "</form>";
 
 				$.ajax({

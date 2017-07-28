@@ -23,11 +23,11 @@ var activeTask = 0;
 var input;
 
 // ---------------------  Init Functions -----------------------------
+app.use( bodyParser.json() );      
+app.use(bodyParser.urlencoded({ extended: true }));
 
 function init(d){
 	dataset = d;
-	app.use( bodyParser.json() );      
-	app.use(bodyParser.urlencoded({ extended: true }));
 	dao.loadInput(activeTask, function (i){ initTask(i); });	
 }
 
@@ -44,6 +44,15 @@ app.get('/', function(req, res) {
 	task = new t.task();
 	task.show(res,dataset,fingerprint.get(req),host,input,activeTask);
 });
+
+app.post('/', function(req, res) {
+	dao.store(req.body.item_id, activeTask, req.body.instant, req.body.contrib, req.body.fingerprint, function(){
+		var t = require('./tasks/task_'+activeTask+'.js');
+		task = new t.task();
+		task.show(res,dataset,req.fingerprint,host,input,activeTask);		
+	});
+});
+
 
 
 

@@ -7,6 +7,12 @@ function task(){
 
 	function show(res,Dataset,Fingerprint,Host,Input,activeTask) {
 
+		if(Input.lifo.isEmpty()){
+			while( !Input.fifo.isEmpty() ){
+				Input.lifo.push( Input.fifo.pop() );
+			}
+		}
+
 		var item = Input.lifo.pop();
 		Input.fifo.push(item);
 
@@ -28,6 +34,14 @@ function task(){
 		res.render('ejs/task_'+activeTask, values);
 		
 	}
+
+
+
+
+
+
+
+
 
 }
 
